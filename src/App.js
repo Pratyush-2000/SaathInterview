@@ -25,20 +25,33 @@ function App() {
 
   const debounce = (func,delay) => {
 
-    let timer;
+    let timeout
 
-    return function(...args) {
-
-      const context = this;
-      if(timer) clearTimeout(timer);
-      timer =setTimeout(() => {
-        timer = null
-        func.apply(context,args);
-      }, delay);
-
+    return (...args) => {
+      clearTimeout(timeout)
+      timeout = setTimeout(() => {
+        func(...args)
+      }, delay)
     }
 
   }
+
+  const throttle = (func,limit) =>{
+    let shouldWait = false
+  
+    return (...args) => {
+      if (shouldWait) return ;
+  
+      func(...args)
+      shouldWait = true
+      setTimeout(() => {
+        shouldWait = false
+      }, limit)
+    }
+  }
+
+  
+
 
   const incrementCount = () => {
     setBoxCount((old) => old+1);
@@ -49,10 +62,18 @@ function App() {
 
     const debounceUpdateBoxes = debounce(incrementCount,3000);
 
-    window.addEventListener('resize',debounceUpdateBoxes);
+    const throttleUpdateBoxes = throttle(incrementCount,3000);
+
+    const combinationUpdate = () =>{
+      debounceUpdateBoxes();
+      throttleUpdateBoxes();
+    }
+
+
+    window.addEventListener('resize',combinationUpdate);
 
     return () => {
-      window.removeEventListener('resize',debounceUpdateBoxes);
+      window.removeEventListener('resize',combinationUpdate);
     }; 
 
   },[])
