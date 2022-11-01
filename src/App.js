@@ -1,5 +1,5 @@
 import './App.css';
-import { useState,useEffect,useCallback } from 'react';
+import { useState,useEffect } from 'react';
 
 
 function App() {
@@ -23,7 +23,7 @@ function App() {
 
   }
 
-  const debounce = (func) => {
+  const debounce = (func,delay) => {
 
     let timer;
 
@@ -34,7 +34,7 @@ function App() {
       timer =setTimeout(() => {
         timer = null
         func.apply(context,args);
-      }, 500);
+      }, delay);
 
     }
 
@@ -47,7 +47,7 @@ function App() {
 
   useEffect(() =>{
 
-    const debounceUpdateBoxes = debounce(incrementCount);
+    const debounceUpdateBoxes = debounce(incrementCount,3000);
 
     window.addEventListener('resize',debounceUpdateBoxes);
 
